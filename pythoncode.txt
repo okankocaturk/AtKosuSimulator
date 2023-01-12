@@ -1,0 +1,28 @@
+import pandas
+import numpy
+from sklearn import linear_model
+
+df = pandas.read_csv("desktop/dataRaces.csv",error_bad_lines=False)
+
+X = df[['KosuCinsi', 'grup', 'mesafePist', 'jokey', 'kilo']]
+y = df['tam_salise']
+X_2 = pandas.get_dummies(X, drop_first=True)  #kategorik veriyi kolon yap
+
+import statsmodels.api as sm
+X_2_sm= sm.add_constant(X_2)
+ls=sm.OLS(y, X_2_sm).fit()      #Ordinary Least Squares
+
+
+print(X_2_sm.columns)           #bagimsiz değişkenleri biliniz bir sonraki listede işaretleyeceksiniz!
+print(len(X_2_sm.columns))	#kac degisken oldugunu biliniz
+
+
+myList=[0 for i in range(89)]   #degisken adedi burada 89 imis
+myList[0]=1			#sabit sayı
+myList[1]=58			#kilo 58 ise
+myList[7]=1			#handikap 15 yarisi
+myList[47]=1			#1600 Cim
+myList[58]=1			#jokey_AKacmaz
+print(myList)
+lsTahmin = ls.predict([myList])
+print(lsTahmin/100)
